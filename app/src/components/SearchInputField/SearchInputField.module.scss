@@ -1,0 +1,29 @@
+.container {
+  .searched-txt {
+    background-color: yellow;
+    color: red;
+  }
+}
+
+.clickPart {
+  padding: 0;
+  border: none;
+  background-color: #fff !important;
+  &:hover {
+  }
+  &:active {
+  }
+  &:focus-within {
+  }
+  &::after {
+    display: none;
+  }
+}
+
+.inputPart {
+  padding: 0;
+  margin-bottom: 0 !important;
+}
+
+.dropdownItem {
+}
