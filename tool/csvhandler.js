@@ -119,6 +119,16 @@ fs.readFile('./resturants.csv', { encoding: 'utf-8' }, (exp, res) => {
   const collecRest = Firestore.collection('resturant');
   const collecOptm = Firestore.collection('opentime');
 
+  const allNames = res.split('\n').map((row) => {
+    const matches = row.match(/"[^"]+"/g);
+    const colName = matches[0];
+    return colName;
+  });
+
+  collecRest.doc('INFO').set({
+    names: allNames,
+  });
+
   res.split('\n').forEach(async (row) => {
     const rowObj = {
       originString: row,
