@@ -115,11 +115,21 @@ function handleDateTime(dateTime = '') {
   }
 }
 
+const G = {
+  progress: 0,
+  total: null,
+  current: 0,
+};
+
 fs.readFile('./restaurant.csv', { encoding: 'utf-8' }, (exp, res) => {
   const collecRest = Firestore.collection('restaurant');
   const collecOptm = Firestore.collection('opentime');
 
-  const allNames = res.split('\n').map((row) => {
+  const rows = res.split('\n');
+
+  G.total = rows.length;
+
+  const allNames = rows.map((row) => {
     const matches = row.match(/"[^"]+"/g);
     const colName = matches[0];
     return colName;
@@ -129,7 +139,7 @@ fs.readFile('./restaurant.csv', { encoding: 'utf-8' }, (exp, res) => {
     names: allNames,
   });
 
-  res.split('\n').forEach(async (row) => {
+  const promises = rows.map(async (row) => {
     const rowObj = {
       originString: row,
     };
@@ -166,5 +176,22 @@ fs.readFile('./restaurant.csv', { encoding: 'utf-8' }, (exp, res) => {
     await rowObj.restaurantRef.update({
       openTimeList: opentTimeIdList,
     });
+
+    G.current += 1;
+    G.progress = Math.floor((G.current / G.total) * 10000) / 100;
+    console.log(G.progress);
+    return;
   });
+
+  const devidedPromises = promises.reduce((pre, cur, index) => {
+    if (index % 20 === 0) {
+      const newArr = [cur];
+      pre.push(newArr);
+      return [...pre];
+    }
+    pre[pre.length - 1].push(cur);
+    return [...pre];
+  }, []);
+
+  Promise.all(devidedPromises);
 });
