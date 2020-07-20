@@ -115,8 +115,8 @@ function handleDateTime(dateTime = '') {
   }
 }
 
-fs.readFile('./resturants.csv', { encoding: 'utf-8' }, (exp, res) => {
-  const collecRest = Firestore.collection('resturant');
+fs.readFile('./restaurant.csv', { encoding: 'utf-8' }, (exp, res) => {
+  const collecRest = Firestore.collection('restaurant');
   const collecOptm = Firestore.collection('opentime');
 
   const allNames = res.split('\n').map((row) => {
@@ -141,7 +141,7 @@ fs.readFile('./resturants.csv', { encoding: 'utf-8' }, (exp, res) => {
 
     rowObj.name = handleName(colName);
     const ref = await collecRest.add({ name: rowObj.name });
-    rowObj.resturantRef = ref;
+    rowObj.restaurantRef = ref;
 
     const openTimeList = colOpenTime
       .replace(/"/g, '')
@@ -156,14 +156,14 @@ fs.readFile('./resturants.csv', { encoding: 'utf-8' }, (exp, res) => {
     const opentTimeIdList = await Promise.all(
       rowObj.openTimeList.map(async (ot) => {
         const ref = await collecOptm.add({
-          resturantName: colName,
+          restaurantName: colName,
           ...ot,
-          resturantId: rowObj.resturantRef.id,
+          restaurantId: rowObj.restaurantRef.id,
         });
         return ref.id;
       })
     );
-    await rowObj.resturantRef.update({
+    await rowObj.restaurantRef.update({
       openTimeList: opentTimeIdList,
     });
   });
