@@ -1,30 +1,35 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Dropdown, InputGroup, FormControl, Button } from 'react-bootstrap';
+import { Dropdown, InputGroup, FormControl } from 'react-bootstrap';
 import classes from './SearchInputField.module.scss';
 import classNames from 'classnames';
-import backendFunctions from 'services/firebase/functions';
+import { useRestaurant } from 'hooks/useRestaurant';
+import GeneralButton from 'components/GeneralButton/GeneralButton';
 
 function SearchInputField(props: React.Props<any>) {
-  const [restaurantNames, setRestaurantNames] = useState([]);
+  const {
+    allRestaurantNames: restaurantNames,
+    setRestaurantNameList,
+    getRestaurantByName,
+  } = useRestaurant();
   const [currentSearchTxt, setCurrentSearchTxt] = useState('');
   const [isInputting, setIsInputting] = useState(false);
+
   useEffect(() => {
-    backendFunctions
-      .getAllRestaurantNames()
-      .then((res) => {
-        const names = res.data.names
-          .map((n: string) => n.replace(/"/g, ''))
-          .sort();
-        setRestaurantNames(names);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+    setRestaurantNameList();
+  }, [setRestaurantNameList]);
+
   const onChange = useCallback((e) => {
     setIsInputting(true);
     setCurrentSearchTxt(e.target.value);
   }, []);
+
+  const onSearchButtonClick = useCallback(
+    (e) => {
+      e.stopPropagation();
+      getRestaurantByName(currentSearchTxt);
+    },
+    [currentSearchTxt, getRestaurantByName]
+  );
 
   const SearchList = useMemo(() => {
     const results = restaurantNames
@@ -35,7 +40,7 @@ function SearchInputField(props: React.Props<any>) {
         ) {
           return true;
         }
-        if (name.toUpperCase().indexOf(currentSearchTxt.toUpperCase()) > -1) {
+        if (name.toUpperCase().includes(currentSearchTxt.toUpperCase())) {
           return true;
         }
         return false;
@@ -50,7 +55,6 @@ function SearchInputField(props: React.Props<any>) {
             e.stopPropagation();
             setCurrentSearchTxt(name);
           }}
-          onMouseDown={() => {}}
           key={`${name}-${index}`}
           href={`#/${name}`}
           dangerouslySetInnerHTML={{
@@ -75,21 +79,14 @@ function SearchInputField(props: React.Props<any>) {
       >
         <InputGroup className={classNames('mb-3', classes.inputPart)}>
           <FormControl
-            placeholder="Recipient's username"
+            placeholder="Restaurant's name"
             aria-label="Recipient's username"
             aria-describedby="basic-addon2"
             onChange={onChange}
             value={currentSearchTxt}
           />
           <InputGroup.Append>
-            <Button
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-              variant="outline-primary"
-            >
-              Search
-            </Button>
+            <GeneralButton onClick={onSearchButtonClick}>Search</GeneralButton>
           </InputGroup.Append>
         </InputGroup>
       </Dropdown.Toggle>
