@@ -1,5 +1,10 @@
 .layoutContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .layoutContent {
+  flex-grow: 1;
+  padding: 1rem 3rem;
 }
