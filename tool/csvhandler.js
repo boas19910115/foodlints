@@ -25,10 +25,6 @@ const app = admin.initializeApp({
 
 const Firestore = app.firestore();
 
-const day = luxon.DateTime.fromFormat('1PM', 'ha').hour;
-
-console.log(day);
-
 const weekdayMap = {
   MON: 1,
   TUE: 2,
@@ -121,77 +117,80 @@ const G = {
   current: 0,
 };
 
-fs.readFile('./restaurant.csv', { encoding: 'utf-8' }, (exp, res) => {
-  const collecRest = Firestore.collection('restaurant');
-  const collecOptm = Firestore.collection('opentime');
+fs.readFile(
+  `${__dirname}/restaurant.csv`,
+  { encoding: 'utf-8' },
+  (exp, res) => {
+    const collecRest = Firestore.collection('restaurant');
+    const collecOptm = Firestore.collection('opentime');
 
-  const rows = res.split('\n');
+    const rows = res.split('\n');
 
-  G.total = rows.length;
+    G.total = rows.length;
 
-  const allNames = rows.map((row) => {
-    const matches = row.match(/"[^"]+"/g);
-    const colName = matches[0];
-    return colName;
-  });
-
-  collecRest.doc('INFO').set({
-    names: allNames,
-  });
-
-  const promises = rows.map(async (row) => {
-    const rowObj = {
-      originString: row,
-    };
-
-    const matches = row.match(/"[^"]+"/g);
-
-    const colName = matches[0];
-    const colOpenTime = matches[1];
-
-    rowObj.name = handleName(colName);
-    const ref = await collecRest.add({ name: rowObj.name });
-    rowObj.restaurantRef = ref;
-
-    const openTimeList = colOpenTime
-      .replace(/"/g, '')
-      .split(/\//)
-      .map((timeStr) => timeStr.trim());
-    rowObj.openTimeList = openTimeList
-      .map((item) => {
-        return handleDateTime(item);
-      })
-      .flat();
-
-    const opentTimeIdList = await Promise.all(
-      rowObj.openTimeList.map(async (ot) => {
-        const ref = await collecOptm.add({
-          restaurantName: colName,
-          ...ot,
-          restaurantId: rowObj.restaurantRef.id,
-        });
-        return ref.id;
-      })
-    );
-    await rowObj.restaurantRef.update({
-      openTimeList: opentTimeIdList,
+    const allNames = rows.map((row) => {
+      const matches = row.match(/"[^"]+"/g);
+      const colName = matches[0].replace(/"/g, '');
+      return colName;
     });
 
-    G.current += 1;
-    G.progress = Math.floor((G.current / G.total) * 10000) / 100;
-    console.log(G.progress);
-    return;
-  });
+    collecRest.doc('INFO').set({
+      names: allNames,
+    });
 
-  const devidedPromises = promises.reduce((pre, cur, index) => {
-    if (index % 20 === 0) {
-      const newArr = [cur];
-      pre.push(newArr);
+    const promises = rows.map(async (row) => {
+      const rowObj = {
+        originString: row,
+      };
+
+      const matches = row.match(/"[^"]+"/g);
+
+      const colName = matches[0].replace(/"/g, '');
+      const colOpenTime = matches[1].replace(/"/g, '');
+
+      rowObj.name = handleName(colName);
+      const ref = await collecRest.add({ name: rowObj.name });
+      rowObj.restaurantRef = ref;
+
+      const openTimeList = colOpenTime
+        .split(/\//)
+        .map((timeStr) => timeStr.trim());
+      rowObj.openTimeList = openTimeList
+        .map((item) => {
+          return handleDateTime(item);
+        })
+        .flat();
+
+      const opentTimeIdList = await Promise.all(
+        rowObj.openTimeList.map(async (ot) => {
+          const ref = await collecOptm.add({
+            restaurantName: colName,
+            ...ot,
+            restaurantId: rowObj.restaurantRef.id,
+          });
+          return ref.id;
+        })
+      );
+      await rowObj.restaurantRef.update({
+        openTimeList: opentTimeIdList,
+      });
+
+      G.current += 1;
+      G.progress = Math.floor((G.current / G.total) * 10000) / 100;
+      console.log(G.progress);
+      return;
+    });
+
+    const devidedPromises = promises.reduce((pre, cur, index) => {
+      if (index % 20 === 0) {
+        const newArr = [cur];
+        pre.push(newArr);
+        return [...pre];
+      }
+      pre[pre.length - 1].push(cur);
       return [...pre];
-    }
-    pre[pre.length - 1].push(cur);
-    return [...pre];
-  }, []);
+    }, []);
 
-  Promise.all(devidedPromises);
-});
+    Promise.all(devidedPromises);
+  }
+);
