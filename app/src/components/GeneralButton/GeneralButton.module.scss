@@ -1,0 +1,14 @@
+@import 'static/color.scss';
+.GeneralButton {
+  border: none;
+  background-color: $c-secondary;
+  color: black;
+  &:hover {
+    background-color: $c-secondary-dark;
+  }
+
+  &:focus {
+    background-color: $c-secondary-dark-more;
+    box-shadow: none;
+  }
+}
