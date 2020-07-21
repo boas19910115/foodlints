@@ -7,7 +7,12 @@ const firestore = app.firestore();
 
 const corsHandler = cors({ origin: true });
 
-type ErrorCode = 'NOT_FOUND_DATA' | 'SERVER_ERROR';
+enum ErrorCodeEnum {
+  NOT_FOUND_DATA = 'NOT_FOUND_DATA',
+  SERVER_ERROR = 'SERVER_ERROR',
+}
+
+type ErrorCode = ErrorCodeEnum.NOT_FOUND_DATA | ErrorCodeEnum.SERVER_ERROR;
 
 type ErrorType = Record<ErrorCode, { message: string; status: number }>;
 
@@ -49,4 +54,23 @@ export const allRestaurantNames = httpsHandler(async (_, response) => {
   const data = await doc.data();
   functions.logger.info(data, { structuredData: true });
   response.send({ data });
+});
+
+export const restaurant = httpsHandler(async (requset, response) => {
+  const {
+    data: { where = 'name', is = '' },
+  } = requset.body;
+  functions.logger.info(`requset.body, ${JSON.stringify(requset.body)}`, {
+    structuredData: true,
+  });
+  const query = await firestore
+    .collection('restaurant')
+    .where(where.toString(), '==', is)
+    .get();
+  if (query.docs[0]) {
+    const data = query.docs[0].data();
+    response.send({ data });
+  } else {
+    throw Error(ErrorCodeEnum.NOT_FOUND_DATA);
+  }
 });
