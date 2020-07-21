@@ -1,0 +1,27 @@
+@import 'static/color.scss';
+.container {
+  margin-top: auto;
+  margin-bottom: 0;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  background-color: $c-secondary;
+}
+.inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  font-weight: 900;
+}
+
+.logo {
+  padding: 1rem;
+}
+
+.menu {
+  padding: 1rem;
+  > * {
+    padding: 1rem;
+  }
+}

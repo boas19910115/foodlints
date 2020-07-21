@@ -1,0 +1,27 @@
+@import 'static/color.scss';
+
+.container {
+  background-color: $c-primary;
+  transition: box-shadow 0.5s;
+  // display: flex;
+  &:hover {
+    box-shadow: black 1rem 0rem 1rem;
+  }
+}
+.inner {
+  display: flex;
+  justify-content: space-between;
+}
+
+.logo {
+  padding: 1rem;
+  font-size: large;
+  font-weight: 900;
+}
+
+.menu {
+  padding: 1rem;
+  > * {
+    padding: 1rem;
+  }
+}
