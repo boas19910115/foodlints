@@ -1,5 +1,6 @@
 import * as firebase from 'firebase/app'
 import 'firebase/functions'
+import 'firebase/auth'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyA4ALClv4-xnnUaDkHSuVwc_SMDBZuSA3c',
@@ -16,4 +17,4 @@ const fireApp = firebase.initializeApp(firebaseConfig, 'Foodlints')
 
 const fireFunctions = fireApp.functions()
 
-export { fireApp, fireFunctions }
+export { firebase, fireApp, fireFunctions }

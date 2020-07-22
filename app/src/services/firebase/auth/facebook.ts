@@ -1,11 +1,12 @@
-import * as firebase from 'firebase/app'
+import { fireApp, firebase } from '../init'
+
 import googleAuthProvider from './google'
 
 const facebookAuthProvider = new firebase.auth.FacebookAuthProvider()
 
 export function facebookSignin(): Promise<firebase.auth.UserCredential> {
   return new Promise((resolve, reject) => {
-    firebase
+    fireApp
       .auth()
       .signInWithPopup(facebookAuthProvider)
       .then(resolve)
@@ -17,7 +18,7 @@ export function facebookSignin(): Promise<firebase.auth.UserCredential> {
               // eslint-disable-next-line @typescript-eslint/camelcase
               login_hint: error.email,
             })
-            firebase
+            fireApp
               .auth()
               .signInWithPopup(googleAuthProvider)
               .then(function (result) {
