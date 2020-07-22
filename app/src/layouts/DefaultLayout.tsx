@@ -3,12 +3,24 @@ import DefaultHeader from './DefaultHeader'
 import DefaultFooter from './DefaultFooter'
 import classes from './DefaultLayout.module.scss'
 
-export default function DefaultLayout(props: React.Props<any>) {
-  const { children } = props
+interface CustomProps extends React.Props<any> {
+  isFlexLayoutContent: boolean
+}
+
+export default function DefaultLayout(props: CustomProps) {
+  const { children, isFlexLayoutContent } = props
   return (
     <div className={classes.layoutContainer}>
       <DefaultHeader></DefaultHeader>
-      <div className={classes.layoutContent}>{children}</div>
+      <div
+        className={
+          isFlexLayoutContent
+            ? classes.layoutContentFlex
+            : classes.layoutContent
+        }
+      >
+        {children}
+      </div>
       <DefaultFooter></DefaultFooter>
     </div>
   )

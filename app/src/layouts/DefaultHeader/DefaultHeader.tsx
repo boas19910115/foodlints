@@ -1,6 +1,6 @@
-import React from 'react';
-import classes from './DefaultHeader.module.scss';
-import { Link } from 'react-router-dom';
+import React from 'react'
+import classes from './DefaultHeader.module.scss'
+import { Link } from 'react-router-dom'
 
 export default function DefaultHeader() {
   return (
@@ -12,8 +12,9 @@ export default function DefaultHeader() {
         <div className={classes.menu}>
           <Link to="/">HOME</Link>
           <Link to="/member">MEMBER</Link>
+          <Link to="/login">LOGIN</Link>
         </div>
       </div>
     </div>
-  );
+  )
 }

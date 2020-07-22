@@ -1,0 +1,52 @@
+.root {
+    display: flex;
+    flex-grow: 1;
+}
+
+@mixin siginButton {
+    outline: none;
+    padding: 0;
+    color: white;
+    font-weight: 900;
+    font-size: 1em;
+    transition: all 500ms;
+    border: none;
+    flex-grow: 1;
+    border-radius: 0;
+
+    &:hover {
+        font-size: 2em;
+    }
+}
+
+.GoogleSiginFragment {
+    flex-grow: 1;
+    display: flex;
+
+    button {
+        @include siginButton;
+
+        cursor: pointer;
+        background-color: #ff3e308a;
+
+        &:hover {
+            background-color: #ff3e30;
+        }
+    }
+}
+
+.FacebookSiginFragment {
+    flex-grow: 1;
+    display: flex;
+
+    button {
+        @include siginButton;
+
+        cursor: pointer;
+        background-color: #3578e58a;
+
+        &:hover {
+            background-color: #3578e5;
+        }
+    }
+}

@@ -7,6 +7,7 @@ interface RouteConfig {
   path: string
   name: string
   PageComponent: React.FunctionComponent
+  isFlexLayout: boolean
 }
 
 const routeMap: Record<string, RouteConfig> = {
@@ -14,26 +15,31 @@ const routeMap: Record<string, RouteConfig> = {
     path: '/',
     name: 'Home',
     PageComponent: HomePage,
+    isFlexLayout: false,
   },
   home: {
     path: '/home',
     name: 'Home',
     PageComponent: HomePage,
+    isFlexLayout: false,
   },
   member: {
     path: '/member',
     name: 'Memeber',
     PageComponent: MemberPage,
+    isFlexLayout: false,
   },
   restaurant: {
     path: '/restaurant',
     name: 'Restaurant',
     PageComponent: RestaurantPage,
+    isFlexLayout: false,
   },
   login: {
     path: '/login',
     name: 'Login',
     PageComponent: LoginPage,
+    isFlexLayout: true,
   },
 }
 
