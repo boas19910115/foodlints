@@ -1,0 +1,13 @@
+{
+  "name": "foodlints",
+  "version": "1.0.0",
+  "main": "./app/src/index.ts",
+  "repository": "https://github.com/boas19910115/foodlints.git",
+  "author": "yuehnanwu <joram19910115@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build:host": "cd app && yarn build:move && cd ..",
+    "deploy": "yarn build:host && firebase deploy",
+    "deploy:host": "yarn build:host && firebase deploy --only hosting"
+  }
+}
