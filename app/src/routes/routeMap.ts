@@ -1,12 +1,12 @@
-import HomePage from 'pages/HomePage';
-import RestaurantPage from 'pages/RestaurantPage';
-import MemberPage from 'pages/MemberPage';
-import LoginPage from 'pages/LoginPage';
+import HomePage from 'pages/HomePage'
+import RestaurantPage from 'pages/RestaurantPage'
+import MemberPage from 'pages/MemberPage'
+import LoginPage from 'pages/LoginPage'
 
 interface RouteConfig {
-  path: string;
-  name: string;
-  PageComponent: React.FunctionComponent;
+  path: string
+  name: string
+  PageComponent: React.FunctionComponent
 }
 
 const routeMap: Record<string, RouteConfig> = {
@@ -35,6 +35,6 @@ const routeMap: Record<string, RouteConfig> = {
     name: 'Login',
     PageComponent: LoginPage,
   },
-};
+}
 
-export default routeMap;
+export default routeMap
