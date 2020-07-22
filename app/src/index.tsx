@@ -13,7 +13,7 @@ import { Helmet } from 'react-helmet'
 ReactDOM.render(
   <React.StrictMode>
     <Helmet>
-      <title>Footlints</title>
+      <title>Foodlints</title>
     </Helmet>
     <Provider store={reduxStore}>
       <Router>

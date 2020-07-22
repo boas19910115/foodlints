@@ -12,7 +12,7 @@ const firebaseConfig = {
   measurementId: 'G-MKYQ5CCK2F',
 };
 
-const fireApp = firebase.initializeApp(firebaseConfig, 'FoodLint');
+const fireApp = firebase.initializeApp(firebaseConfig, 'Foodlints');
 
 const fireFunctions = fireApp.functions();
 

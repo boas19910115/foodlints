@@ -7,7 +7,7 @@ export default function DefaultHeader() {
     <div className={classes.container}>
       <div className={classes.inner}>
         <div className={classes.logo}>
-          <i>FoodLint</i>
+          <i>Foodlints</i>
         </div>
         <div className={classes.menu}>
           <Link to="/">HOME</Link>
