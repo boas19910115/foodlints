@@ -3,7 +3,7 @@ import { Route, RouteProps, Redirect } from 'react-router-dom'
 import useAuthManager from 'hooks/useAuthManager'
 
 interface PrivateRouteProps extends RouteProps {
-  otherProp: string
+  otherProp?: string
 }
 
 export default function PrivateRoute(props: PrivateRouteProps) {
@@ -13,7 +13,7 @@ export default function PrivateRoute(props: PrivateRouteProps) {
     <Route
       {...rest}
       render={({ location }) =>
-        isSignedIn() ? (
+        isSignedIn ? (
           children
         ) : (
           <Redirect

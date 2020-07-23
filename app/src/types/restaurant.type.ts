@@ -1,8 +1,9 @@
 export type RestaurantName = string
 
 export interface Restaurant {
+  id: string
   name: RestaurantName
-  openTimeList: string[]
+  openTimeList: OpenTime[]
 }
 
 export interface OpenTime {

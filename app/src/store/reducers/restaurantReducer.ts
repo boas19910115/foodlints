@@ -1,10 +1,10 @@
-import { RestaurantState } from './stateTypes';
-import { RestaurantActionType } from 'store/actionTypes/restaurantActionTypes';
-import ActionType from 'store/actionTypes/actionTypeEnum';
+import { RestaurantState } from './stateTypes'
+import { RestaurantActionType } from 'store/actionTypes/restaurantActionTypes'
+import ActionType from 'store/actionTypes/actionTypeEnum'
 
 const initState: RestaurantState = {
   allRestaurantNames: [],
-};
+}
 
 export function restaurantReducer(
   state = initState,
@@ -15,10 +15,10 @@ export function restaurantReducer(
       return {
         ...state,
         allRestaurantNames: action.payload,
-      };
+      }
     }
     default: {
-      return state;
+      return state
     }
   }
 }

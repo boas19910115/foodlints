@@ -4,15 +4,16 @@ import classes from './SearchInputField.module.scss'
 import classNames from 'classnames'
 import { useRestaurant } from 'hooks/useRestaurant'
 import GeneralButton from 'components/GeneralButton/GeneralButton'
+import { useHistory } from 'react-router-dom'
 
 function SearchInputField(props: React.Props<any>) {
   const {
     allRestaurantNames: restaurantNames,
     setRestaurantNameList,
-    getRestaurantByName,
   } = useRestaurant()
   const [currentSearchTxt, setCurrentSearchTxt] = useState('')
   const [isInputting, setIsInputting] = useState(false)
+  const history = useHistory()
 
   useEffect(() => {
     setRestaurantNameList()
@@ -26,9 +27,9 @@ function SearchInputField(props: React.Props<any>) {
   const onSearchButtonClick = useCallback(
     (e) => {
       e.stopPropagation()
-      getRestaurantByName(currentSearchTxt)
+      history.push(`/restaurant/${currentSearchTxt}`)
     },
-    [currentSearchTxt, getRestaurantByName]
+    [currentSearchTxt, history]
   )
 
   const SearchList = useMemo(() => {
@@ -56,7 +57,6 @@ function SearchInputField(props: React.Props<any>) {
             setCurrentSearchTxt(name)
           }}
           key={`${name}-${index}`}
-          href={`#/${name}`}
           dangerouslySetInnerHTML={{
             __html: name.replace(
               new RegExp(`${currentSearchTxt}`, 'gi'),

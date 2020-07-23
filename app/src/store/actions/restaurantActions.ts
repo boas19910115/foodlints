@@ -1,6 +1,6 @@
-import { RestaurantName } from 'types/restaurant.type';
-import { RestaurantActionType } from 'store/actionTypes/restaurantActionTypes';
-import ActionType from 'store/actionTypes/actionTypeEnum';
+import { RestaurantName } from 'types/restaurant.type'
+import { RestaurantActionType } from 'store/actionTypes/restaurantActionTypes'
+import ActionType from 'store/actionTypes/actionTypeEnum'
 
 export function setAllRestaurantNames(
   data: Array<RestaurantName>
@@ -8,5 +8,5 @@ export function setAllRestaurantNames(
   return {
     type: ActionType.SET_ALL_RESTAURANT_NAMES,
     payload: data,
-  };
+  }
 }

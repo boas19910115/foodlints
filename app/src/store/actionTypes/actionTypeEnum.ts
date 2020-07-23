@@ -4,6 +4,8 @@ enum ActionType {
   CLEAN_SEARCH_FIELD = 'clean the input field',
 
   SET_CURRENT_DATETIME = 'set current datetime to filter',
+
+  SET_USER = 'set user information',
 }
 
-export default ActionType;
+export default ActionType
