@@ -1,35 +1,35 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Dropdown, InputGroup, FormControl } from 'react-bootstrap';
-import classes from './SearchInputField.module.scss';
-import classNames from 'classnames';
-import { useRestaurant } from 'hooks/useRestaurant';
-import GeneralButton from 'components/GeneralButton/GeneralButton';
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import { Dropdown, InputGroup, FormControl } from 'react-bootstrap'
+import classes from './SearchInputField.module.scss'
+import classNames from 'classnames'
+import { useRestaurant } from 'hooks/useRestaurant'
+import GeneralButton from 'components/GeneralButton/GeneralButton'
 
 function SearchInputField(props: React.Props<any>) {
   const {
     allRestaurantNames: restaurantNames,
     setRestaurantNameList,
     getRestaurantByName,
-  } = useRestaurant();
-  const [currentSearchTxt, setCurrentSearchTxt] = useState('');
-  const [isInputting, setIsInputting] = useState(false);
+  } = useRestaurant()
+  const [currentSearchTxt, setCurrentSearchTxt] = useState('')
+  const [isInputting, setIsInputting] = useState(false)
 
   useEffect(() => {
-    setRestaurantNameList();
-  }, [setRestaurantNameList]);
+    setRestaurantNameList()
+  }, [setRestaurantNameList])
 
   const onChange = useCallback((e) => {
-    setIsInputting(true);
-    setCurrentSearchTxt(e.target.value);
-  }, []);
+    setIsInputting(true)
+    setCurrentSearchTxt(e.target.value)
+  }, [])
 
   const onSearchButtonClick = useCallback(
     (e) => {
-      e.stopPropagation();
-      getRestaurantByName(currentSearchTxt);
+      e.stopPropagation()
+      getRestaurantByName(currentSearchTxt)
     },
     [currentSearchTxt, getRestaurantByName]
-  );
+  )
 
   const SearchList = useMemo(() => {
     const results = restaurantNames
@@ -38,22 +38,22 @@ function SearchInputField(props: React.Props<any>) {
           currentSearchTxt.length === 0 ||
           currentSearchTxt.trim().length === 0
         ) {
-          return true;
+          return true
         }
         if (name.toUpperCase().includes(currentSearchTxt.toUpperCase())) {
-          return true;
+          return true
         }
-        return false;
+        return false
       })
-      .filter((_, index) => index < 30);
+      .filter((_, index) => index < 30)
 
     return results.length ? (
       results.map((name: string, index) => (
         <Dropdown.Item
           className={classes.dropdownItem}
           onClick={(e) => {
-            e.stopPropagation();
-            setCurrentSearchTxt(name);
+            e.stopPropagation()
+            setCurrentSearchTxt(name)
           }}
           key={`${name}-${index}`}
           href={`#/${name}`}
@@ -67,8 +67,8 @@ function SearchInputField(props: React.Props<any>) {
       ))
     ) : (
       <Dropdown.Item disabled>Not Found</Dropdown.Item>
-    );
-  }, [currentSearchTxt, restaurantNames]);
+    )
+  }, [currentSearchTxt, restaurantNames])
 
   return (
     <Dropdown className={classes.container}>
@@ -92,7 +92,7 @@ function SearchInputField(props: React.Props<any>) {
       </Dropdown.Toggle>
       <Dropdown.Menu show={isInputting}>{SearchList}</Dropdown.Menu>
     </Dropdown>
-  );
+  )
 }
 
-export default SearchInputField;
+export default SearchInputField
