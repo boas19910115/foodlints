@@ -1,4 +1,6 @@
-export const WEEK_DAY_MAP = {
+import { WeekDayString } from 'types/restaurant.type'
+
+export const WEEK_DAY_MAP: Record<number, WeekDayString> = {
   0: 'SUN',
   1: 'MON',
   2: 'TUE',

@@ -27,7 +27,12 @@ function SearchInputField(props: React.Props<any>) {
   const onSearchButtonClick = useCallback(
     (e) => {
       e.stopPropagation()
-      history.push(`/restaurant/${currentSearchTxt}`)
+      const txt = currentSearchTxt.trim()
+      if (txt.length) {
+        history.push(`/restaurant/${txt}`)
+      } else {
+        setCurrentSearchTxt('')
+      }
     },
     [currentSearchTxt, history]
   )
@@ -86,7 +91,9 @@ function SearchInputField(props: React.Props<any>) {
             value={currentSearchTxt}
           />
           <InputGroup.Append>
-            <GeneralButton onClick={onSearchButtonClick}>Search</GeneralButton>
+            <GeneralButton CompType="div" onClick={onSearchButtonClick}>
+              Search
+            </GeneralButton>
           </InputGroup.Append>
         </InputGroup>
       </Dropdown.Toggle>

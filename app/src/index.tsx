@@ -11,7 +11,7 @@ import reduxStore from 'store'
 import { Helmet } from 'react-helmet'
 
 ReactDOM.render(
-  <React.StrictMode>
+  <React.Fragment>
     <Helmet>
       <title>Foodlints</title>
     </Helmet>
@@ -20,7 +20,7 @@ ReactDOM.render(
         <App />
       </Router>
     </Provider>
-  </React.StrictMode>,
+  </React.Fragment>,
   document.getElementById('root')
 )
 

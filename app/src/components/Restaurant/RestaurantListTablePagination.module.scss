@@ -1,0 +1,13 @@
+@import 'static/color.scss';
+.root {
+  bottom: 0;
+  margin-top: auto;
+  margin-bottom: 0;
+}
+
+.pageItem {
+  width: 50px;
+  span.page-link {
+    background-color: $c-secondary-dark;
+  }
+}

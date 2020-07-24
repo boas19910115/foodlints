@@ -11,7 +11,10 @@ function App() {
       <Switch>
         {Object.values(routeMap).map((r) => (
           <Route exact={r.isExact} key={r.name} path={r.path}>
-            <DefaultLayout isFlexLayoutContent={r.isFlexLayout}>
+            <DefaultLayout
+              isFlexColumn={r.isFlexColumn}
+              isFlexLayoutContent={r.isFlexLayout}
+            >
               {r.isPrivate ? (
                 <PrivateRoute>
                   <r.PageComponent></r.PageComponent>

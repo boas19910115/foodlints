@@ -10,6 +10,7 @@ interface RouteConfig {
   isFlexLayout: boolean
   isPrivate: boolean
   isExact: boolean
+  isFlexColumn?: boolean
 }
 
 const routeMap: Record<string, RouteConfig> = {
@@ -17,17 +18,10 @@ const routeMap: Record<string, RouteConfig> = {
     path: '/',
     name: 'Home',
     PageComponent: HomePage,
-    isFlexLayout: false,
+    isFlexLayout: true,
+    isFlexColumn: true,
     isPrivate: false,
     isExact: true,
-  },
-  home: {
-    path: '/home',
-    name: 'Home',
-    PageComponent: HomePage,
-    isFlexLayout: false,
-    isPrivate: false,
-    isExact: false,
   },
   member: {
     path: '/member',

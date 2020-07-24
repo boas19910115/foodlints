@@ -1,0 +1,13 @@
+@import 'static/color.scss';
+.headRow {
+  th:first-child {
+    width: 30%;
+  }
+}
+
+.bodyRow {
+  cursor: pointer;
+  &:hover {
+    background-color: $c-primary;
+  }
+}

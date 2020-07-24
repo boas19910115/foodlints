@@ -125,7 +125,7 @@ const G = {
 fs.readFile(
   `${__dirname}/restaurant.csv`,
   { encoding: 'utf-8' },
-  (exp, res) => {
+  async (exp, res) => {
     const collecRest = Firestore.collection('restaurant')
     const collecOptm = Firestore.collection('opentime')
 
@@ -182,21 +182,56 @@ fs.readFile(
         }
       }, {})
 
-      const openTimeRef = await collecOptm.add({
+      const dataToAdd = {
         restaurantId: rowObj.restaurantRef.id,
         restaurantName: rowObj.name,
         ...weekSchedule,
-      })
+      }
+
+      const openTimeRef = await collecOptm.add(dataToAdd)
 
       await rowObj.restaurantRef.update({
         openTimeWeekCalendarId: openTimeRef.id,
       })
 
+      await Promise.all(
+        Object.keys(weekSchedule).map(async (weekdayTxt) => {
+          await Firestore.collection(`opentime_weekday`)
+            .doc(weekdayTxt)
+            .set({ blank: 0 })
+        })
+      )
+
+      const promisesInner = Object.keys(weekSchedule).map(
+        async (weekdayTxt) => {
+          const temp = {
+            [dataToAdd.restaurantId]: {
+              name: dataToAdd.restaurantName,
+              id: dataToAdd.restaurantId,
+              ...weekSchedule[weekdayTxt],
+            },
+          }
+          try {
+            await Firestore.collection(`opentime_weekday`)
+              .doc(weekdayTxt)
+              .update(temp)
+          } catch (error) {
+            await Firestore.collection(`opentime_weekday`)
+              .doc(weekdayTxt)
+              .set(temp)
+          }
+          return
+        }
+      )
+
+      await Promise.all(promisesInner)
+
       G.current += 1
       G.progress = Math.floor((G.current / G.total) * 10000) / 100
       console.log(G.progress)
+      // console.log(weekSchedule)
       // console.log('=======================')
-      return
+      return weekSchedule
     })
 
     const devidedPromises = promises.reduce((pre, cur, index) => {
@@ -209,6 +244,16 @@ fs.readFile(
       return [...pre]
     }, [])
 
-    Promise.all(devidedPromises)
+    const result = await Promise.all(
+      devidedPromises.map((ps) => Promise.all(ps))
+    )
+    console.log(result)
   }
 )
+
+function runPromiseInSequence(arr, input) {
+  return arr.reduce(
+    (promiseChain, currentFunction) => promiseChain.then(currentFunction),
+    Promise.resolve(input)
+  )
+}

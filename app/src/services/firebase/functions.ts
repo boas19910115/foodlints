@@ -20,6 +20,9 @@ interface FireFunctions extends Record<string, any> {
   getOpenTimeListByRestaurantId: (
     restaurantId: string
   ) => Promise<firebase.functions.HttpsCallableResult>
+  getRestaurantWeekdayTime: (props: {
+    millis: number
+  }) => Promise<firebase.functions.HttpsCallableResult>
 }
 
 const backendFunctionsTemp: FireFunctions = {
@@ -31,6 +34,10 @@ const backendFunctionsTemp: FireFunctions = {
   getOpenTimeListByRestaurantId: (restaurantId: string) => {
     const get = fireFunctions.httpsCallable('openTimeListByRestaurantId')
     return get({ restaurantId })
+  },
+  getRestaurantWeekdayTime: (props) => {
+    const get = fireFunctions.httpsCallable('restaurantWeekdayTime')
+    return get(props)
   },
   addMember: (user) => {
     const add = fireFunctions.httpsCallable('addMember')

@@ -1,16 +1,33 @@
 export type RestaurantName = string
 
 export interface Restaurant {
-  id: string
   name: RestaurantName
-  openTimeList: OpenTime[]
+  id: string
+  openTimeWeekCalendar: OpenTimeWeekCalendar
 }
 
-export interface OpenTime {
-  duration: number
-  endTime: string
-  restaurantId: string
-  restaurantName: RestaurantName
-  startTime: string
-  weekdayList: number[]
+export interface RestaurantWeekday extends OpenTimeOfDay {
+  name: RestaurantName
+  id: string
 }
+
+export type OpenTimeOfDay = {
+  duration: number
+  startTime: number
+  endTime: number
+  isOverNight: boolean
+}
+
+export type WeekDayString =
+  | 'SUN'
+  | 'MON'
+  | 'TUE'
+  | 'WED'
+  | 'THU'
+  | 'FRI'
+  | 'SAT'
+
+export type OpenTimeWeekCalendar = Record<
+  WeekDayString | 'restaurantId' | 'restaurantName',
+  OpenTimeOfDay
+>

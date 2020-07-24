@@ -1,10 +1,12 @@
 @import 'static/color.scss';
 .GeneralButton {
+  cursor: pointer;
   border: none;
   background-color: $c-secondary;
   color: black;
   &:hover {
     background-color: $c-secondary-dark;
+    color: #fff;
   }
 
   &:focus {
