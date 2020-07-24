@@ -1,0 +1,13 @@
+@import 'static/color.scss';
+.ListGroup {
+  text-align: center;
+  > div {
+    &:hover {
+      cursor: pointer;
+      background-color: $c-primary;
+    }
+  }
+}
+.isSelected {
+  background-color: $c-primary-dark;
+}
