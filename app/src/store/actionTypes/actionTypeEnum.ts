@@ -9,6 +9,8 @@ enum ActionType {
   SET_USER = 'set user information',
 
   SET_CURRENT_PAGE_NUMBER = 'set current page number',
+
+  SET_CURRENT_FAV_COLLECTIONS = 'set current user favorite collections',
 }
 
 export default ActionType

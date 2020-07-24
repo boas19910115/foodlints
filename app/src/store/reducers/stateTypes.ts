@@ -1,5 +1,6 @@
 import { RestaurantName, RestaurantWeekday } from 'types/restaurant.type'
 import { User } from 'types/user.type'
+import { FavCollection } from 'types/favorite.type'
 
 export interface RestaurantState {
   allRestaurantNames: RestaurantName[]
@@ -12,4 +13,8 @@ export interface RestaurantState {
 
 export interface UserState {
   currentUser: User | null
+}
+
+export interface FavState {
+  currentFavCollections: FavCollection[]
 }

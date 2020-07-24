@@ -39,9 +39,9 @@ fireApp.auth().onAuthStateChanged(function (user) {
   if (user) {
     const userExtracted = getUserData(user)
     store.dispatch(setCurrentUser(userExtracted))
-    localStorage.setItem('foodlints-isSignIn', 'true')
+    localStorage.setItem('foodlints-isSignIn', JSON.stringify(userExtracted))
   } else {
     store.dispatch(setCurrentUser(null))
-    localStorage.setItem('foodlints-isSignIn', 'false')
+    localStorage.setItem('foodlints-isSignIn', 'NULL')
   }
 })

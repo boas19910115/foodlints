@@ -21,7 +21,7 @@ export default function RestaurantListTable(props: RestaurantListTableProps) {
         <thead>
           <tr className={classes.headRow}>
             <th>Name</th>
-            <th>Like</th>
+            {/* <th>Like</th> */}
           </tr>
         </thead>
         <tbody>
@@ -35,7 +35,7 @@ export default function RestaurantListTable(props: RestaurantListTableProps) {
                 key={data.id}
               >
                 <td>{data.name}</td>
-                <td>none</td>
+                {/* <td>none</td> */}
               </tr>
             )
           })}

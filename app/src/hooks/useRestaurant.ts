@@ -7,6 +7,8 @@ import {
   setRestaurantQueried,
 } from 'store/actions/restaurantActions'
 import useRestaurantPagination from './useRestaurantPagination'
+import * as lux from 'luxon'
+import { WEEK_DAY_MAP } from 'consts'
 
 function useRestaurant() {
   const { pgnCurrentPageNumber } = useRestaurantPagination()
@@ -37,13 +39,33 @@ function useRestaurant() {
 
   const getRestaurantByDateTime = useCallback(
     ({ millis }: { millis: number }) => {
+      const baseDateTime = lux.DateTime.fromMillis(millis).startOf('day')
+      const targetLuxDateTime = lux.DateTime.fromMillis(millis)
+      const weekdayTxt = WEEK_DAY_MAP[targetLuxDateTime.get('weekday')]
+      const absoluteMinutes = targetLuxDateTime.diff(baseDateTime, 'minutes')
+        .minutes
       return backendFunctions
         .getRestaurantWeekdayTime({
           millis,
+          weekdayTxt,
+          absoluteMinutes,
         })
         .then((res) => {
-          dp(setRestaurantQueried(res.data))
-          return res.data
+          const sorted = res.data.sort((a: any, b: any) => {
+            const nameA = a.name.toUpperCase() // ignore upper and lowercase
+            const nameB = b.name.toUpperCase() // ignore upper and lowercase
+            if (nameA < nameB) {
+              return -1
+            }
+            if (nameA > nameB) {
+              return 1
+            }
+
+            // names must be equal
+            return 0
+          })
+          dp(setRestaurantQueried(sorted))
+          return sorted
         })
     },
     [dp]

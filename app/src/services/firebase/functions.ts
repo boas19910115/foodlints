@@ -1,5 +1,6 @@
 import { fireFunctions } from './init'
 import { User } from 'types/user.type'
+import { WeekDayString } from 'types/restaurant.type'
 
 async function errorHandler(func: Function, ...args: any[]) {
   try {
@@ -10,19 +11,29 @@ async function errorHandler(func: Function, ...args: any[]) {
   }
 }
 
-interface FireFunctions extends Record<string, any> {
-  getAllRestaurantNames: firebase.functions.HttpsCallable
-  getRestaurant: (
-    where: string,
-    is: string
-  ) => Promise<firebase.functions.HttpsCallableResult>
-  addMember: (user: User) => Promise<firebase.functions.HttpsCallableResult>
-  getOpenTimeListByRestaurantId: (
-    restaurantId: string
-  ) => Promise<firebase.functions.HttpsCallableResult>
+interface FireFunctions<T = Promise<firebase.functions.HttpsCallableResult>>
+  extends Record<string, (...props: any[]) => T> {
+  getAllRestaurantNames: () => T
+  getRestaurant: (where: string, is: string) => T
+  addMember: (user: User) => T
+  getOpenTimeListByRestaurantId: (restaurantId: string) => T
   getRestaurantWeekdayTime: (props: {
-    millis: number
-  }) => Promise<firebase.functions.HttpsCallableResult>
+    millis?: number
+    weekdayTxt: WeekDayString
+    absoluteMinutes: number
+  }) => T
+  addFavCollection: (props: {
+    userEmail: string
+    favCollectionName: string
+  }) => T
+  addFav: (props: {
+    favCollectionId: string
+    restaurantId: string
+    restaurantName: string
+  }) => T
+  getFav: (props: { userEmail: string }) => T
+  delFavCollection: (props: { favCollectionId: string }) => T
+  delFav: (props: { favCollectionId: string; restaurantId: string }) => T
 }
 
 const backendFunctionsTemp: FireFunctions = {
@@ -43,6 +54,13 @@ const backendFunctionsTemp: FireFunctions = {
     const add = fireFunctions.httpsCallable('addMember')
     return add(user)
   },
+  addFavCollection: (props) =>
+    fireFunctions.httpsCallable('addFavCollection')(props),
+  addFav: (props) => fireFunctions.httpsCallable('addFav')(props),
+  getFav: (props) => fireFunctions.httpsCallable('getFav')(props),
+  delFavCollection: (props) =>
+    fireFunctions.httpsCallable('delFavCollection')(props),
+  delFav: (props) => fireFunctions.httpsCallable('delFav')(props),
 }
 
 const backendFunctions = Object.keys(backendFunctionsTemp).reduce(

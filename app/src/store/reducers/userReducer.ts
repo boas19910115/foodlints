@@ -2,8 +2,10 @@ import ActionType from 'store/actionTypes/actionTypeEnum'
 import { UserActionType } from 'store/actionTypes/userActionTypes'
 import { UserState } from './stateTypes'
 
+const userSaved = localStorage.getItem('foodlints-isSignIn')
+
 const initState: UserState = {
-  currentUser: null,
+  currentUser: userSaved && userSaved !== 'NULL' ? JSON.parse(userSaved) : null,
 }
 
 export function userReducer(

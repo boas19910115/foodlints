@@ -1,10 +1,12 @@
 import React from 'react'
 import classes from './DefaultHeader.module.scss'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import useAuthManager from 'hooks/useAuthManager'
+import GeneralButton from 'components/GeneralButton'
 
 export default function DefaultHeader() {
   const { isSignedIn, signOut } = useAuthManager()
+  const hs = useHistory()
 
   return (
     <div className={classes.container}>
@@ -16,10 +18,15 @@ export default function DefaultHeader() {
           <Link to="/">HOME</Link>
           <Link to="/member">MEMBER</Link>
           {isSignedIn ? (
-            // eslint-disable-next-line jsx-a11y/anchor-is-valid
-            <span onClick={signOut}>LOG OUT</span>
+            <GeneralButton onClick={signOut}>LOG OUT</GeneralButton>
           ) : (
-            <Link to="/login">LOG IN</Link>
+            <GeneralButton
+              onClick={() => {
+                hs.push('/login')
+              }}
+            >
+              LOG IN
+            </GeneralButton>
           )}
         </div>
       </div>

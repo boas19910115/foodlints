@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import DefaultHeader from './DefaultHeader'
 import DefaultFooter from './DefaultFooter'
 import classes from './DefaultLayout.module.scss'
 import classnames from 'classnames'
+import useFav from 'hooks/useFav'
 
 interface CustomProps extends React.Props<any> {
   isFlexLayoutContent: boolean
@@ -11,6 +12,10 @@ interface CustomProps extends React.Props<any> {
 
 export default function DefaultLayout(props: CustomProps) {
   const { children, isFlexLayoutContent, isFlexColumn } = props
+  const { getFav } = useFav()
+  useEffect(() => {
+    getFav()
+  }, [getFav])
   return (
     <div className={classes.layoutContainer}>
       <DefaultHeader></DefaultHeader>

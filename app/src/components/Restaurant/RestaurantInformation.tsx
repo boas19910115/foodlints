@@ -5,9 +5,9 @@ import { useRestaurant } from 'hooks/useRestaurant'
 import backendFunctions from 'services/firebase/functions'
 import { Restaurant, OpenTimeWeekCalendar } from 'types/restaurant.type'
 import { Table, Card } from 'react-bootstrap'
-import GeneralButton from 'components/GeneralButton'
 import { WEEK_DAY_MAP } from 'consts'
 import { convertDateTimeToTimeTxt } from './helper'
+import InputToAddFav from 'components/Fav/InputToAddFav'
 
 export default function RestaurantInformation() {
   const [restaurantData, setRestaurantData] = useState<Restaurant | null>(null)
@@ -75,12 +75,10 @@ export default function RestaurantInformation() {
               </tr>
             </tbody>
           </Table>
-          <GeneralButton>
-            Like{' '}
-            <span aria-label="" role="img">
-              ❤️
-            </span>
-          </GeneralButton>
+          {}
+          <InputToAddFav
+            restaurantData={restaurantData || null}
+          ></InputToAddFav>
         </Card.Body>
       </Card>
     </div>

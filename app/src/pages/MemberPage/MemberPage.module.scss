@@ -1,0 +1,16 @@
+.root {
+  width: 100%;
+  display: flex;
+  justify-content: baseline;
+  flex-grow: 1;
+  flex-direction: column;
+  align-items: center;
+}
+.card {
+  width: 30%;
+  height: fit-content;
+}
+
+.favCols {
+  display: flex;
+}

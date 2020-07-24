@@ -1,7 +1,6 @@
 import * as functions from 'firebase-functions'
 import * as cors from 'cors'
 import * as admin from 'firebase-admin'
-import * as lux from 'luxon'
 
 const app = admin.initializeApp(functions.config().firebase)
 const firestore = app.firestore()
@@ -76,33 +75,15 @@ export const restaurant = httpsHandler(async (requset, response) => {
   }
 })
 
-const WEEKDAY_MAP: Record<number, string> = {
-  0: 'SUN',
-  1: 'MON',
-  2: 'TUE',
-  3: 'WED',
-  4: 'THU',
-  5: 'FRI',
-  6: 'SAT',
-  7: 'SUN',
-}
-
-const baseDateTime = lux.DateTime.fromJSDate(new Date()).startOf('day')
-
 export const restaurantWeekdayTime = httpsHandler(async (request, response) => {
   const {
-    data: { millis },
+    data: { weekdayTxt, absoluteMinutes: diffMinutes },
   } = request.body
-  const targetLuxDateTime = lux.DateTime.fromMillis(millis)
-
-  const weekdayTxt = WEEKDAY_MAP[targetLuxDateTime.get('weekday')]
 
   const collecOptm = firestore.collection('opentime_weekday')
   const weekdayRestaurants = await (
     await collecOptm.doc(weekdayTxt).get()
   ).data()
-
-  const diffMinutes = targetLuxDateTime.diff(baseDateTime, 'minutes').minutes
 
   if (weekdayRestaurants) {
     const result = Object.values(weekdayRestaurants)
@@ -154,9 +135,126 @@ export const openTimeListByRestaurantId = httpsHandler(
   }
 )
 
-// export const addCollection = httpsHandler(async (request, response) => {});
+export const addFavCollection = httpsHandler(async (request, response) => {
+  const {
+    data: { userEmail, favCollectionName },
+  } = request.body
 
-// export const addFavorite = httpsHandler(async (request, response) => {});
+  const res = await firestore.collection('favCollection').add({
+    name: favCollectionName,
+    collaborators: [],
+    list: [],
+    owner: userEmail,
+  })
+
+  response.send({
+    data: {
+      ...res,
+      id: res.id,
+    },
+  })
+})
+
+export const addFav = httpsHandler(async (request, response) => {
+  const {
+    data: { favCollectionId, restaurantId, restaurantName },
+  } = request.body
+
+  const doc = await firestore
+    .collection('favCollection')
+    .doc(favCollectionId)
+    .get()
+
+  const newData = { restaurantId, restaurantName }
+
+  const data = doc.data()
+  if (data) {
+    if (data.list.length) {
+      const updated = await firestore
+        .collection('favCollection')
+        .doc(favCollectionId)
+        .update({
+          list: [...data?.list, newData],
+        })
+      response.send({
+        data: updated.writeTime,
+      })
+    } else {
+      const updated = await firestore
+        .collection('favCollection')
+        .doc(favCollectionId)
+        .update({
+          list: [newData],
+        })
+      response.send({
+        data: updated.writeTime,
+      })
+    }
+  } else {
+    response.send({
+      data: null,
+    })
+  }
+})
+
+export const getFav = httpsHandler(async (request, response) => {
+  const {
+    data: { userEmail },
+  } = request.body
+
+  const docs = await (
+    await firestore
+      .collection('favCollection')
+      .where('owner', '==', userEmail)
+      .get()
+  ).docs
+
+  if (docs && docs.length > 0) {
+    response.send({
+      data: docs.map((d) => ({ ...d.data(), id: d.id })),
+    })
+  } else {
+    response.send({
+      data: null,
+    })
+  }
+})
+
+export const delFavCollection = httpsHandler(async (request, response) => {
+  const {
+    data: { favCollectionId },
+  } = request.body
+
+  const res = await firestore
+    .collection('favCollection')
+    .doc(favCollectionId)
+    .delete()
+
+  response.send({
+    data: res.writeTime,
+  })
+})
+
+export const delFav = httpsHandler(async (request, response) => {
+  const {
+    data: { favCollectionId, restaurantId },
+  } = request.body
+
+  const data = await (
+    await firestore.collection('favCollection').doc(favCollectionId).get()
+  ).data()
+  const updated = await firestore
+    .collection('favCollection')
+    .doc(favCollectionId)
+    .update({
+      list: data?.list.filter(
+        (d: { restaurantId: string }) => d.restaurantId !== restaurantId
+      ),
+    })
+  response.send({
+    data: updated.writeTime,
+  })
+})
 
 export const addMember = httpsHandler(async (request, response) => {
   const {
