@@ -1,5 +1,5 @@
-const fs = require('fs');
-const luxon = require('luxon');
+const fs = require('fs')
+const luxon = require('luxon')
 
 const firebaseConfig = {
   type: 'service_account',
@@ -14,16 +14,16 @@ const firebaseConfig = {
   auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
   client_x509_cert_url:
     'https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-1cy9t%40foodlints.iam.gserviceaccount.com',
-};
+}
 
-const admin = require('firebase-admin');
+const admin = require('firebase-admin')
 
 const app = admin.initializeApp({
   credential: admin.credential.cert(firebaseConfig),
   databaseURL: 'https://foodlints.firebaseio.com',
-});
+})
 
-const Firestore = app.firestore();
+const Firestore = app.firestore()
 
 const weekdayMap = {
   MON: 1,
@@ -36,78 +36,83 @@ const weekdayMap = {
   FRI: 5,
   SAT: 6,
   SUN: 7,
-};
-
-function handleName(name) {
-  return name;
 }
 
-const regToMatchTime = /((\d+(:\d+){0,1} (am|pm|AM|PM)) *- *(\d+(:\d+){0,1} (am|pm|AM|PM)))/g;
-const regToMatchWeekdays = /(([A-Z]{3,5}) *- *([A-Z]{3,5}))|([A-Z]{3,5})/g;
+const weekdayMapToTxt = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
+
+function handleName(name) {
+  return name
+}
+
+const regToMatchTime = /((\d+(:\d+){0,1} (am|pm|AM|PM)) *- *(\d+(:\d+){0,1} (am|pm|AM|PM)))/g
+const regToMatchWeekdays = /(([A-Z]{3,5}) *- *([A-Z]{3,5}))|([A-Z]{3,5})/g
 
 function handleDateTime(dateTime = '') {
-  const originString = dateTime;
-  const upperCaseTemp = dateTime.toUpperCase();
+  const originString = dateTime
+  const upperCaseTemp = dateTime.toUpperCase()
 
   const weekdayMatches = upperCaseTemp
     .match(regToMatchWeekdays)
-    .map((mh) => mh.replace(/ /g, ''));
+    .map((mh) => mh.replace(/ /g, ''))
 
   const timeMatches = upperCaseTemp
     .match(regToMatchTime)
-    .map((mh) => mh.replace(/ /g, ''));
+    .map((mh) => mh.replace(/ /g, ''))
 
   const weekdayList = weekdayMatches
     .map((mh) => {
       if (mh.indexOf('-') > -1) {
-        const weekdaySplit = mh.split('-');
-        const startWd = weekdaySplit[0];
-        const endWd = weekdaySplit[1];
-        const rangeTemp = weekdayMap[endWd] - weekdayMap[startWd];
-        const range = rangeTemp > 0 ? rangeTemp + 1 : rangeTemp + 7 + 1;
+        const weekdaySplit = mh.split('-')
+        const startWd = weekdaySplit[0]
+        const endWd = weekdaySplit[1]
+        const rangeTemp = weekdayMap[endWd] - weekdayMap[startWd]
+        const range = rangeTemp > 0 ? rangeTemp + 1 : rangeTemp + 7 + 1
         const rangeArray = new Array(range)
           .fill(null)
-          .map((nil, idx) => (weekdayMap[startWd] + idx) % 7);
+          .map((nil, idx) => (weekdayMap[startWd] + idx) % 7)
 
-        return rangeArray;
+        return rangeArray
       }
-      return weekdayMap[mh];
+      return weekdayMap[mh]
     })
-    .flat();
+    .flat()
 
-  const timePeriodSplit = timeMatches[0].split('-');
+  const timePeriodSplit = timeMatches[0].split('-')
 
-  const startDateTime = generateLuxonDateTime(timePeriodSplit[0]);
-  const endDateTime = generateLuxonDateTime(timePeriodSplit[1]);
+  const startDateTime = generateLuxonDateTime(timePeriodSplit[0])
+  const endDateTime = generateLuxonDateTime(timePeriodSplit[1])
 
-  const duration = (() => {
-    const temp = endDateTime.toMillis() - startDateTime.toMillis();
-    return (temp > 0 ? temp : temp + 3600 * 24 * 1000) / (1000 * 60);
-  })();
+  const duration = endDateTime.diff(startDateTime, 'minutes').minutes
+
+  // console.log(weekdayList)
+
+  const startTime = startDateTime.hour * 60 + startDateTime.minute
+  const endTime = endDateTime.hour * 60 + endDateTime.minute
 
   try {
     return {
       //   weekdayMatches,
       weekdayList,
       //   timeMatches,
-      duration,
-      startTime: startDateTime.toFormat('HH:mm'),
-      endTime: endDateTime.toFormat('HH:mm'),
-    };
+      duration: Math.abs(duration),
+      startTime,
+      endTime,
+      isOverNight: duration < 0,
+    }
   } catch (error) {
-    console.log(error);
+    console.log(error)
 
-    console.log(upperCaseTemp, matches);
+    console.log(upperCaseTemp, matches)
   }
 
   function generateLuxonDateTime(timeString) {
-    let op;
-    op = luxon.DateTime.fromFormat(timeString, 'ha');
+    let op
+    op = luxon.DateTime.fromFormat(timeString, 'ha')
     if (op.invalidReason === 'unparsable') {
-      op = luxon.DateTime.fromFormat(timeString, 'h:ma');
+      op = luxon.DateTime.fromFormat(timeString, 'h:ma')
     }
 
-    return op;
+    return op
   }
 }
 
@@ -115,82 +120,95 @@ const G = {
   progress: 0,
   total: null,
   current: 0,
-};
+}
 
 fs.readFile(
   `${__dirname}/restaurant.csv`,
   { encoding: 'utf-8' },
   (exp, res) => {
-    const collecRest = Firestore.collection('restaurant');
-    const collecOptm = Firestore.collection('opentime');
+    const collecRest = Firestore.collection('restaurant')
+    const collecOptm = Firestore.collection('opentime')
 
-    const rows = res.split('\n');
+    const rows = res.split('\n')
 
-    G.total = rows.length;
+    G.total = rows.length
 
     const allNames = rows.map((row) => {
-      const matches = row.match(/"[^"]+"/g);
-      const colName = matches[0].replace(/"/g, '');
-      return colName;
-    });
+      const matches = row.match(/"[^"]+"/g)
+      const colName = matches[0].replace(/"/g, '')
+      return colName
+    })
 
     collecRest.doc('INFO').set({
       names: allNames,
-    });
+    })
 
     const promises = rows.map(async (row) => {
       const rowObj = {
         originString: row,
-      };
+      }
 
-      const matches = row.match(/"[^"]+"/g);
+      const matches = row.match(/"[^"]+"/g)
 
-      const colName = matches[0].replace(/"/g, '');
-      const colOpenTime = matches[1].replace(/"/g, '');
+      const colName = matches[0].replace(/"/g, '')
+      const colOpenTime = matches[1].replace(/"/g, '')
 
-      rowObj.name = handleName(colName);
-      const ref = await collecRest.add({ name: rowObj.name });
-      rowObj.restaurantRef = ref;
+      rowObj.name = handleName(colName)
+      const ref = await collecRest.add({ name: rowObj.name })
+      rowObj.restaurantRef = ref
 
       const openTimeList = colOpenTime
         .split(/\//)
-        .map((timeStr) => timeStr.trim());
-      rowObj.openTimeList = openTimeList
+        .map((timeStr) => timeStr.trim())
+      const temp = (rowObj.openTimeList = openTimeList
         .map((item) => {
-          return handleDateTime(item);
+          return handleDateTime(item)
         })
-        .flat();
+        .flat())
 
-      const opentTimeIdList = await Promise.all(
-        rowObj.openTimeList.map(async (ot) => {
-          const ref = await collecOptm.add({
-            restaurantName: colName,
-            ...ot,
-            restaurantId: rowObj.restaurantRef.id,
-          });
-          return ref.id;
-        })
-      );
+      const weekSchedule = temp.reduce((pre, cur) => {
+        const { weekdayList, ...rest } = cur
+        const openDays = weekdayList.reduce((p, c) => {
+          return {
+            ...p,
+            [weekdayMapToTxt[c]]: {
+              ...rest,
+            },
+          }
+        }, {})
+        return {
+          ...pre,
+          ...openDays,
+        }
+      }, {})
+
+      const openTimeRef = await collecOptm.add({
+        restaurantId: rowObj.restaurantRef.id,
+        restaurantName: rowObj.name,
+        ...weekSchedule,
+      })
+
       await rowObj.restaurantRef.update({
-        openTimeList: opentTimeIdList,
-      });
+        openTimeWeekCalendarId: openTimeRef.id,
+      })
 
-      G.current += 1;
-      G.progress = Math.floor((G.current / G.total) * 10000) / 100;
-      console.log(G.progress);
-      return;
-    });
+      G.current += 1
+      G.progress = Math.floor((G.current / G.total) * 10000) / 100
+      console.log(G.progress)
+      // console.log('=======================')
+      return
+    })
 
     const devidedPromises = promises.reduce((pre, cur, index) => {
       if (index % 20 === 0) {
-        const newArr = [cur];
-        pre.push(newArr);
-        return [...pre];
+        const newArr = [cur]
+        pre.push(newArr)
+        return [...pre]
       }
-      pre[pre.length - 1].push(cur);
-      return [...pre];
-    }, []);
+      pre[pre.length - 1].push(cur)
+      return [...pre]
+    }, [])
 
-    Promise.all(devidedPromises);
+    Promise.all(devidedPromises)
   }
-);
+)

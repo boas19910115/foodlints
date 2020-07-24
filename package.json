@@ -6,7 +6,7 @@
   "author": "yuehnanwu <joram19910115@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build:host": "cd app && yarn build:move && cd ..",
+    "build:host": "rm -rf ./public || true && mkdir ./public && cd app && yarn build:move && cd ..",
     "deploy": "yarn build:host && firebase deploy",
     "deploy:host": "yarn build:host && firebase deploy --only hosting"
   }
