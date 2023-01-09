@@ -1,6 +1,6 @@
 {
   "devDependencies": {
     "firebase-admin": "^9.0.0",
-    "luxon": "^1.24.1"
+    "luxon": "^2.5.2"
   }
 }
