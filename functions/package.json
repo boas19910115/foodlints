@@ -17,7 +17,7 @@
     "@types/cors": "^2.8.6",
     "@types/luxon": "^1.24.3",
     "cors": "^2.8.5",
-    "firebase-admin": "^9.0.0",
+    "firebase-admin": "^11.4.1",
     "firebase-functions": "^3.6.1",
     "luxon": "^1.24.1"
   },
